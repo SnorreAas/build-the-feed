@@ -1,2 +1,1 @@
-# build-the-feed
-Community driven programming &amp; tech forum
+# React app made using typescript-firebase template
