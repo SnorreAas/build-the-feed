@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FlexDirections,
   SignInButtons,
@@ -6,7 +6,7 @@ import {
 import { ImageBox } from "../components/common/ImageBox";
 import { CreatePostButton } from "../components/CreatePostButton";
 import { Main } from "../components/Main";
-import { MainLayout } from "../components/MainLayout";
+import { ThreeColumnLayout } from "../components/ThreeColumnLayout";
 import { PostListing } from "../components/PostListing";
 import { Sidebar } from "../components/Sidebar";
 import { SidebarContainer } from "../components/Sidebar/SidebarContainer";
@@ -25,7 +25,7 @@ export const Home = () => {
   });
 
   return (
-    <MainLayout>
+    <ThreeColumnLayout>
       <Sidebar>
         <SidebarContainer>
           <h2 className="mb-4 text-[1.25rem] font-bold">
@@ -45,11 +45,13 @@ export const Home = () => {
         <PostListing posts={posts} />
       </Main>
       <Sidebar>
-        <div className=" relative w-full pt-[50%] rounded-t-md">
-          <ImageBox img="https://i0.wp.com/css-tricks.com/wp-content/uploads/2021/12/default-social-css-tricks.png" />
+        <div className="lg:block hidden">
+          <div className=" relative w-full pt-[50%] rounded-t-md">
+            <ImageBox img="https://i0.wp.com/css-tricks.com/wp-content/uploads/2021/12/default-social-css-tricks.png" />
+          </div>
+          <SidebarContainer>test</SidebarContainer>
         </div>
-        <SidebarContainer></SidebarContainer>
       </Sidebar>
-    </MainLayout>
+    </ThreeColumnLayout>
   );
 };

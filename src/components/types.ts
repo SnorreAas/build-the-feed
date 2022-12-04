@@ -20,9 +20,20 @@ export interface UserResponse {
   email: string;
   photoURL: string;
   uid: string;
+  nameId: string;
+  posts?: PostResponse[];
+  postCount?: string;
   likes?: string[];
+  likeCount?: string;
   comments?: string[];
+  commentCount?: string;
   bookmarks?: string[];
+  bookmarkCount?: string;
+  bio?: string;
+  followers?: string;
+  followerCount?: string;
+  following?: string;
+  followingCount?: string;
 }
 
 export interface Post {
@@ -35,9 +46,11 @@ export interface Post {
   readTime: string;
   createdAt: string;
   likes?: string;
+  likeCount: string;
   comments?: Comment[];
-  commentCount?: string;
-  bookmarkCount?: string;
+  commentCount: string;
+  bookmarks?: string[];
+  bookmarkCount: string;
 }
 
 export interface PostResponse {
@@ -50,9 +63,11 @@ export interface PostResponse {
   readTime: string;
   createdAt: string;
   likes?: string;
+  likeCount: string;
   comments?: Comment[];
-  commentCount?: string;
-  bookmarkCount?: string;
+  commentCount: string;
+  bookmarks?: string[];
+  bookmarkCount: string;
 }
 
 export interface PostForm {

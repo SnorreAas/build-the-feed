@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ArticleLayout } from "../components/ArticleLayout";
 import { ImageBox } from "../components/common/ImageBox";
 import { MainContainer } from "../components/Main/MainContainer";
-import { PostResponse, Tag } from "../components/PostListing/types";
+import { PostResponse, Tag } from "../components/types";
 import { useMount } from "../hooks/useMount";
 import { database } from "../service/firebase";
 import ReactMarkdown from "react-markdown";
@@ -14,19 +14,20 @@ import { ActionBar } from "../components/ActionBar";
 import { SidebarContainer } from "../components/Sidebar/SidebarContainer";
 import { Button } from "../components/common/Button";
 import { ButtonVariant } from "../components/common/Button/Button";
+import { Paths } from "./routes";
+import { getPostIdFromUrl } from "../components/helpers";
+import { ButtonFollow } from "../components/ButtonFollow";
+import { useUserContext } from "../components/auth/UserContext";
+import { isLoggedInUserProfile } from "../components/auth/helpers";
 
 export const Article = (): JSX.Element | null => {
   const [post, setPost] = useState<PostResponse>();
   const location = useLocation();
-
-  const getPostIdFromUrl = () => {
-    const pathName = location.pathname;
-    return pathName.split("/").filter(Boolean).pop();
-  };
+  const user = useUserContext();
 
   const fetchPost = async () => {
-    const postId = location.state ? location.state.id : getPostIdFromUrl();
-    // Make getPostById return reaction counts
+    const postId = getPostIdFromUrl(location.pathname);
+    if (!postId) return;
     await database.getPostById(postId).then((result) => setPost(result));
   };
 
@@ -45,25 +46,32 @@ export const Article = (): JSX.Element | null => {
 
   return (
     <ArticleLayout>
-      {/* Send in post.likesCount & post.bookmarksCount and useState in there on mount */}
-      <ActionBar postId={post.id} />
+      <ActionBar
+        postId={post.id}
+        likeCount={post.likeCount}
+        commentCount={post.commentCount}
+        bookmarkCount={post.bookmarkCount}
+      />
       <div>
         <div className="relative w-full pt-[42%] rounded-t-md">
           <ImageBox img={post.file} />
         </div>
         <MainContainer>
           <>
-            <div className="flex">
+            <Link
+              className="flex cursor-pointer"
+              to={Paths.HOME + post.author.nameId}
+            >
               <img
                 className="mr-2 mt-1 rounded-[50%] h-8 w-8"
-                src={post.author.photoURL ?? ""}
-                alt={post.author.photoURL?.toString() ?? ""}
+                src={post.author.photoURL}
+                alt={post.author.displayName}
               />
               <div className="block">
                 <p className="text-m">{post.author.displayName}</p>
                 <p className="text-sm mb-2">{post.createdAt}</p>
               </div>
-            </div>
+            </Link>
             <div className="">
               <h2 className="text-4xl font-bold mb-6">{post.title}</h2>
               <div className="mb-8">
@@ -106,18 +114,30 @@ export const Article = (): JSX.Element | null => {
           <div className="block h-8 w-full rounded-t-md bg-blue-900" />
           <SidebarContainer>
             <div>
-              <div className="flex mt-[-30px]">
+              <Link
+                className="flex mt-[-30px]"
+                to={Paths.HOME + post.author.nameId}
+              >
                 <img
                   className="mr-2 rounded-[50%] h-12 w-12"
-                  src={post.author.photoURL ?? ""}
-                  alt={post.author.photoURL?.toString() ?? ""}
+                  src={post.author.photoURL}
+                  alt={post.author.displayName}
                 />
                 <div className="block mt-5">
                   <p className="text-xl font-bold">{post.author.displayName}</p>
                 </div>
-              </div>
+              </Link>
               <div className="mt-5">
-                <Button variant={ButtonVariant.OUTLINED} text="Follow" />
+                {!isLoggedInUserProfile(user?.uid, post.author.uid) && (
+                  <ButtonFollow userId={user?.uid} checkId={post.author.uid} />
+                )}
+                {isLoggedInUserProfile(user?.uid, post.author.uid) && (
+                  <Button
+                    text="Got to profile"
+                    variant={ButtonVariant.FILLED}
+                    route={Paths.HOME + post.author.nameId}
+                  />
+                )}
               </div>
             </div>
           </SidebarContainer>

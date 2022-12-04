@@ -1,6 +1,7 @@
 import type { Attempt, AttemptEntry, Attempts, Run } from "./domain";
 import { child, get, push, remove, set, update } from "firebase/database";
 import {
+  getAllUsersRef,
   getAttemptRef,
   getLeaderboardRef,
   getPostBookmarksIdRef,
@@ -11,6 +12,8 @@ import {
   getPostsRef,
   getUserBookmarksIdRef,
   getUserBookmarksRef,
+  getUserFollowersRef,
+  getUserFollowingRef,
   getUserLikesIdRef,
   getUserLikesRef,
   getUserPostsRef,
@@ -24,28 +27,15 @@ import {
   PostFormRequest,
   PostResponse,
   UserResponse,
-} from "../../components/PostListing/types";
+} from "../../components/types";
 import { auth } from "./FirebaseAuth";
 import { createUserIdFromName } from "../../components/PostListing/helpers";
-
-const date = new Date();
-
-let day = date.getDate();
-let month = date.getMonth() + 1;
-let year = date.getFullYear();
-
-let currentDate = `${day}-${month}-${year}`;
-
-function readingTime(content: string) {
-  const wpm = 225;
-  const words = content.trim().split(/\s+/).length;
-  const time = Math.ceil(words / wpm);
-  return time.toString();
-}
-
-const createPostIdFromTitle = (title: string) => {
-  return title.split(" ").join("-").toLowerCase();
-};
+import {
+  createPostIdFromTitle,
+  getCurrentDate,
+  getReadingTime,
+  upgradeImageQuality,
+} from "./helpers";
 
 const getAuthorValue = async (author: string) => {
   const authorResponse = await get(getUserRef(author));
@@ -64,14 +54,15 @@ class FirebaseRealtimeDB {
       const snapshot = await get(getUserRef(userData.uid));
       const user = snapshot.exists();
       const nameId = createUserIdFromName(userData.displayName);
+      const highQualityPhotoURL = upgradeImageQuality(userData.photoURL);
       if (!user) {
         await set(getUserRef(userData.uid), {
           uid: userData.uid,
           nameId,
           displayName: userData.displayName,
           email: userData.email,
-          photoURL: userData.photoURL,
-          createdAt: currentDate,
+          photoURL: highQualityPhotoURL,
+          createdAt: getCurrentDate(),
         });
         logger.info(`Successfully saved user with [uid=${userData.uid}]`);
       } else {
@@ -100,6 +91,41 @@ class FirebaseRealtimeDB {
     }
   }
 
+  async getUserByNameId(nameId: string) {
+    logger.trace(`Fetching user..`);
+
+    logger.debug(
+      `Attempting to fetch user in realtime database with [nameId=${nameId}]`
+    );
+
+    const snapshot = await get(getAllUsersRef());
+    if (snapshot.exists()) {
+      const data = snapshot.val() as UserResponse[];
+      const filteredUser = Object.fromEntries(
+        Object.entries(data).filter(([key, values]) => values.nameId === nameId)
+      );
+      const profile = Object.values(filteredUser);
+      let posts: PostResponse[] = [];
+      if (profile && profile[0].posts) {
+        const postIds = Object.keys(profile[0].posts);
+        const postArray = postIds.map(
+          async (id) => await database.getPostById(id).then((result) => result)
+        );
+        posts = await Promise.all(postArray);
+      }
+      const postCount = !!profile[0].posts
+        ? Object.keys(profile[0].posts).length.toString()
+        : "0";
+      const commentCount = !!profile[0].comments
+        ? Object.keys(profile[0].comments).length.toString()
+        : "0";
+      const followerCount = !!profile[0].followers
+        ? Object.keys(profile[0].followers).length.toString()
+        : "0";
+      return { ...profile[0], postCount, commentCount, followerCount, posts };
+    }
+  }
+
   async publishPost(payload: PostFormRequest) {
     logger.trace(`Publish attempt for [post=${payload.title}]`);
 
@@ -114,8 +140,8 @@ class FirebaseRealtimeDB {
       const data = {
         ...payload,
         id: postId,
-        createdAt: currentDate,
-        readTime: readingTime(payload.content),
+        createdAt: getCurrentDate(),
+        readTime: getReadingTime(payload.content),
         author: payload.author,
       };
       await set(getPostIdRef(postId), data);
@@ -138,6 +164,15 @@ class FirebaseRealtimeDB {
         entries.map(async ([key, value]) => ({
           ...value,
           author: await getAuthorValue(value.author).then((result) => result),
+          commentCount: value.comments
+            ? Object.keys(value.comments).length.toString()
+            : "0",
+          likeCount: value.likes
+            ? Object.keys(value.likes).length.toString()
+            : "0",
+          bookmarkCount: value.bookmarks
+            ? Object.keys(value.bookmarks).length.toString()
+            : "0",
           id: key,
         }))
       );
@@ -157,7 +192,17 @@ class FirebaseRealtimeDB {
       const post = snapshot.val();
       const authorResponse = await get(getUserRef(post.author));
       const author = authorResponse.val() as User;
-      return { ...post, author };
+      return {
+        ...post,
+        author,
+        commentCount: post.comments
+          ? Object.keys(post.comments).length.toString()
+          : "0",
+        likeCount: post.likes ? Object.keys(post.likes).length.toString() : "0",
+        bookmarkCount: post.bookmarks
+          ? Object.keys(post.bookmarks).length.toString()
+          : "0",
+      };
     } else {
       logger.info(`Failed to fetch [post=${id}]`);
     }
@@ -181,6 +226,24 @@ class FirebaseRealtimeDB {
     }
   }
 
+  async registerFollowOrUnFollow(loggedInUser: string, userToFollow: string) {
+    logger.trace(`Register follow for [user=${userToFollow}]`);
+
+    logger.debug(
+      `Attempting to register follow in realtime database with [payload=${userToFollow}]`
+    );
+    const snapshot = await get(getUserFollowingRef(loggedInUser));
+    if (snapshot.exists() && snapshot.hasChild(userToFollow)) {
+      await remove(getUserFollowingRef(loggedInUser));
+      await remove(getUserFollowersRef(userToFollow));
+      logger.info(`Successfully removed follow`);
+    } else {
+      await update(getUserFollowingRef(loggedInUser), { [userToFollow]: true });
+      await update(getUserFollowersRef(userToFollow), { [loggedInUser]: true });
+      logger.info(`Successfully registered follow`);
+    }
+  }
+
   async getPostLikeCount(id: string) {
     logger.trace(`Fetching like for [post=${id}]`);
 
@@ -194,6 +257,22 @@ class FirebaseRealtimeDB {
       return snapshot.size.toString();
     } else {
       logger.info(`Failed to fetch [post=${id}]`);
+    }
+  }
+
+  async getUserFollowerCount(uid: string) {
+    logger.trace(`Fetching like for [post=${uid}]`);
+
+    logger.debug(
+      `Attempting to fetch like in realtime database with [payload=${uid}]`
+    );
+
+    const snapshot = await get(getUserFollowersRef(uid));
+    if (snapshot.exists()) {
+      logger.info(`Successfully fetched [post=${uid}]`);
+      return snapshot.size.toString();
+    } else {
+      logger.info(`Failed to fetch [post=${uid}]`);
     }
   }
 
@@ -261,6 +340,23 @@ class FirebaseRealtimeDB {
       return true;
     } else {
       logger.info(`Post is not liked for [user=${uid}]`);
+      return false;
+    }
+  }
+
+  async checkIfUserHasFollowed(loggedInUser: string, userToFollow: string) {
+    logger.trace(`Fetching followers for [user=${userToFollow}]`);
+
+    logger.debug(
+      `Attempting to fetch followers in realtime database with [payload=${userToFollow}]`
+    );
+
+    const snapshot = await get(getUserFollowingRef(loggedInUser));
+    if (snapshot.exists() && snapshot.hasChild(userToFollow)) {
+      logger.info(`Profile is followed by [user=${loggedInUser}]`);
+      return true;
+    } else {
+      logger.info(`Profile is not followed by [user=${loggedInUser}]`);
       return false;
     }
   }

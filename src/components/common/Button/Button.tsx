@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { buttonFlat, buttonOutlined, buttonStyle } from "./style";
+import { buttonStyles } from "./style";
 
 export enum ButtonVariant {
   FLAT = "flat",
   OUTLINED = "outlined",
+  FILLED = "filled",
 }
 
 interface ButtonProps {
@@ -26,9 +27,7 @@ export const Button = ({
   const button = (
     <button
       type={submit ? "submit" : "button"}
-      className={`${buttonStyle} ${
-        variant === ButtonVariant.FLAT ? buttonFlat : buttonOutlined
-      }`}
+      className={`${buttonStyles.default} ${buttonStyles[variant]}`}
       onClick={onClick}
       disabled={disabled}
     >
