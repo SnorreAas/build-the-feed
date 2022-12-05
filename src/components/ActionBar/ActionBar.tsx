@@ -30,7 +30,9 @@ export const ActionBar = ({
     await database
       .registerLikeOrDislike(postId, user.uid)
       .then(() => setDataUpdating(false));
-    database.getPostLikeCount(postId).then((result) => setLikesCount(result));
+    await database
+      .getPostLikeCount(postId)
+      .then((result) => setLikesCount(result));
   };
 
   const registerBookmark = async () => {
@@ -39,19 +41,23 @@ export const ActionBar = ({
     await database
       .registerBookmarkOrUnmark(postId, user.uid)
       .then(() => setDataUpdating(false));
-    database
+    await database
       .getBookmarkCount(postId)
       .then((result) => setBookmarksCount(result));
   };
 
+  const setStats = async (postId: string, userId: string) => {
+    await database
+      .checkIfUserHasBookmarkedPost(postId, userId)
+      .then((result) => setUserHasBookmark(result));
+    await database
+      .checkIfUserHasLikedPost(postId, userId)
+      .then((result) => setUserHasLiked(result));
+  };
+
   useEffect(() => {
     if (!user || !postId) return;
-    database
-      .checkIfUserHasBookmarkedPost(postId, user.uid)
-      .then((result) => setUserHasBookmark(result));
-    database
-      .checkIfUserHasLikedPost(postId, user.uid)
-      .then((result) => setUserHasLiked(result));
+    setStats(postId, user.uid);
   }, [user, postId, dataUpdating]);
   return (
     <div className="relative w-full h-full md:block hidden">
@@ -64,7 +70,7 @@ export const ActionBar = ({
             <span
               className={`${
                 userHasLiked && "bg-red-300"
-              } p-2 rounded-[50%] text-default bg-transparent group-hover:bg-red-200 transition-colors`}
+              } p-2 rounded-[50%] text-default group-hover:bg-red-200 transition-colors`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +93,7 @@ export const ActionBar = ({
             </span>
           </button>
           <button className="relative flex flex-col items-center">
-            <span className="p-2 rounded-[50%] text-default bg-transparent hover:bg-green-200 transition-colors">
+            <span className="p-2 rounded-[50%] text-default hover:bg-green-200 transition-colors">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -111,7 +117,7 @@ export const ActionBar = ({
             <span
               className={`${
                 userHasBookmark && "bg-blue-300"
-              } p-2 rounded-[50%] text-default bg-transparent group-hover:bg-blue-200 transition-colors`}
+              } p-2 rounded-[50%] text-default group-hover:bg-blue-200 transition-colors`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

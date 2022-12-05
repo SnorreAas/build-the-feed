@@ -1,13 +1,5 @@
 import type { Attempt, AttemptEntry, Attempts, Run } from "./domain";
-import {
-  child,
-  get,
-  orderByChild,
-  push,
-  remove,
-  set,
-  update,
-} from "firebase/database";
+import { child, get, push, remove, set, update } from "firebase/database";
 import {
   getAllUsersRef,
   getAttemptRef,
