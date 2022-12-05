@@ -1,6 +1,7 @@
 import { Article } from "./Article";
 import { NewArticle } from "./auth/NewArticle";
 import { Home } from "./Home";
+import { Profile } from "./Profile";
 
 interface RouteType {
   path: string;
@@ -45,9 +46,9 @@ const routes: RouteType[] = [
   },
   {
     path: `${Paths.PROFILE}`,
-    component: Home,
+    component: Profile,
     name: "Profile",
-    protected: true,
+    protected: false,
   },
   {
     path: `${Paths.NEW}`,

@@ -4,12 +4,22 @@ import { useUserContext } from "../auth/UserContext";
 
 interface Props {
   postId: string | undefined;
+  likeCount: string;
+  commentCount: string;
+  bookmarkCount: string;
 }
 
-export const ActionBar = ({ postId }: Props) => {
+export const ActionBar = ({
+  postId,
+  likeCount,
+  commentCount,
+  bookmarkCount,
+}: Props) => {
   const user = useUserContext();
-  const [likesCount, setLikesCount] = useState<string>();
-  const [bookmarksCount, setBookmarksCount] = useState<string>();
+  const [likesCount, setLikesCount] = useState<string | undefined>(likeCount);
+  const [bookmarksCount, setBookmarksCount] = useState<string | undefined>(
+    bookmarkCount
+  );
   const [dataUpdating, setDataUpdating] = useState(false);
   const [userHasBookmark, setUserHasBookmark] = useState(false);
   const [userHasLiked, setUserHasLiked] = useState(false);
@@ -20,6 +30,7 @@ export const ActionBar = ({ postId }: Props) => {
     await database
       .registerLikeOrDislike(postId, user.uid)
       .then(() => setDataUpdating(false));
+    database.getPostLikeCount(postId).then((result) => setLikesCount(result));
   };
 
   const registerBookmark = async () => {
@@ -28,23 +39,20 @@ export const ActionBar = ({ postId }: Props) => {
     await database
       .registerBookmarkOrUnmark(postId, user.uid)
       .then(() => setDataUpdating(false));
+    database
+      .getBookmarkCount(postId)
+      .then((result) => setBookmarksCount(result));
   };
 
   useEffect(() => {
     if (!user || !postId) return;
-    database.getPostLikeCount(postId).then((result) => setLikesCount(result));
     database
-      .getBookmarkCount(postId)
-      .then((result) => setBookmarksCount(result));
-    if (user) {
-      database
-        .checkIfUserHasBookmarkedPost(postId, user.uid)
-        .then((result) => setUserHasBookmark(result));
-      database
-        .checkIfUserHasLikedPost(postId, user.uid)
-        .then((result) => setUserHasLiked(result));
-    }
-  }, [dataUpdating, user, postId]);
+      .checkIfUserHasBookmarkedPost(postId, user.uid)
+      .then((result) => setUserHasBookmark(result));
+    database
+      .checkIfUserHasLikedPost(postId, user.uid)
+      .then((result) => setUserHasLiked(result));
+  }, [user, postId, dataUpdating]);
   return (
     <div className="relative w-full h-full md:block hidden">
       <div className="sticky top-20">
@@ -55,7 +63,7 @@ export const ActionBar = ({ postId }: Props) => {
           >
             <span
               className={`${
-                userHasLiked && "bg-red-200"
+                userHasLiked && "bg-red-300"
               } p-2 rounded-[50%] text-default bg-transparent group-hover:bg-red-200 transition-colors`}
             >
               <svg
@@ -73,9 +81,9 @@ export const ActionBar = ({ postId }: Props) => {
             <span
               className={`${
                 userHasLiked && "text-red-500"
-              } min-w-auto block text-default group-hover:text-red-500`}
+              } min-w-auto block text-default group-hover:text-red-600`}
             >
-              {likesCount ?? "0"}
+              {likesCount}
             </span>
           </button>
           <button className="relative flex flex-col items-center">
@@ -92,7 +100,9 @@ export const ActionBar = ({ postId }: Props) => {
                 <path d="M10 3h4a8 8 0 010 16v3.5c-5-2-12-5-12-11.5a8 8 0 018-8zm2 14h2a6 6 0 000-12h-4a6 6 0 00-6 6c0 3.61 2.462 5.966 8 8.48V17z"></path>
               </svg>
             </span>
-            <span className="min-w-auto block text-default">0</span>
+            <span className="min-w-auto block text-default">
+              {commentCount}
+            </span>
           </button>
           <button
             className="relative flex flex-col items-center group"
@@ -100,7 +110,7 @@ export const ActionBar = ({ postId }: Props) => {
           >
             <span
               className={`${
-                userHasBookmark && "bg-blue-200"
+                userHasBookmark && "bg-blue-300"
               } p-2 rounded-[50%] text-default bg-transparent group-hover:bg-blue-200 transition-colors`}
             >
               <svg
@@ -117,7 +127,7 @@ export const ActionBar = ({ postId }: Props) => {
             </span>
             <span
               className={`${
-                userHasBookmark && "text-blue-500"
+                userHasBookmark && "text-blue-600"
               } min-w-auto block text-default group-hover:text-blue-500`}
             >
               {bookmarksCount ?? "0"}

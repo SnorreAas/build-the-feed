@@ -1,4 +1,10 @@
-import { DatabaseReference, child, getDatabase, ref } from "firebase/database";
+import {
+  DatabaseReference,
+  child,
+  getDatabase,
+  ref,
+  QueryConstraint,
+} from "firebase/database";
 
 import { Firebase } from "./Firebase";
 
@@ -40,6 +46,16 @@ export function getUserBookmarksIdRef(
 ): DatabaseReference {
   const root = getDatabaseRoot();
   return child(root, `/users/${uid}/bookmarks/${id}`);
+}
+
+export function getUserFollowersRef(uid: string): DatabaseReference {
+  const root = getDatabaseRoot();
+  return child(root, `/users/${uid}/followers`);
+}
+
+export function getUserFollowingRef(uid: string): DatabaseReference {
+  const root = getDatabaseRoot();
+  return child(root, `/users/${uid}/following`);
 }
 
 export function getPostsRef(): DatabaseReference {

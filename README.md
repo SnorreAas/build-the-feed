@@ -6,7 +6,7 @@ Community driven programming &amp; tech forum to create, share knowledge and con
 
 - React.js
 - TypeScript
-- TailwindCss
+- TailwindCSS
 - Firebase
 
 ## Run Project

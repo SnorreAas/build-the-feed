@@ -9,7 +9,7 @@ import { TagsInput } from "../../components/forms/TagsInput";
 import { TextArea } from "../../components/forms/TextArea";
 import { ImageUploader } from "../../components/ImageUploader";
 import { MainContainer } from "../../components/Main/MainContainer";
-import { PostForm } from "../../components/PostListing/types";
+import { PostForm } from "../../components/types";
 import { database } from "../../service/firebase/FirebaseRealtimDB";
 import { storage } from "../../service/firebase/FirebaseStorage";
 import { Paths } from "../routes";
