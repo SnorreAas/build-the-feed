@@ -43,7 +43,7 @@ export const Profile = () => {
       await database
         .registerFollowOrUnFollow(user.uid, profile.uid)
         .then(() => setDataUpdating(false));
-      database
+      await database
         .getUserFollowerCount(profile.uid)
         .then((result) => setFollowerCount(result));
     }
