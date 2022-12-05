@@ -31,11 +31,6 @@ export const Article = (): JSX.Element | null => {
     await database.getPostById(postId).then((result) => setPost(result));
   };
 
-  const formatDate = (dateString: string) => {
-    const [day, month, year] = dateString.split("-") as any;
-    return new Date(+year, month - 1, 0);
-  };
-
   useMount(() => {
     fetchPost();
   });
@@ -53,13 +48,15 @@ export const Article = (): JSX.Element | null => {
         bookmarkCount={post.bookmarkCount}
       />
       <div>
-        <div className="relative w-full pt-[42%] rounded-t-md">
-          <ImageBox img={post.file} />
-        </div>
+        {post.file && (
+          <div className="relative w-full pt-[42%] rounded-t-md">
+            <ImageBox img={post.file} />
+          </div>
+        )}
         <MainContainer>
           <>
             <Link
-              className="flex cursor-pointer"
+              className="flex cursor-pointer pb-2"
               to={Paths.HOME + post.author.nameId}
             >
               <img

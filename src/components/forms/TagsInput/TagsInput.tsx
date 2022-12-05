@@ -34,7 +34,7 @@ export const TagsInput = ({ onKeyDown }: Props) => {
     <div className="flex flex-wrap gap-2">
       {tags.map((tag, index) => (
         <div
-          className="bg-light-blue w-[max-content] my-auto px-2 py-1 rounded-md"
+          className="bg-light-blue dark:bg-container-dark w-[max-content] my-auto px-2 py-1 rounded-md"
           key={index}
         >
           <span className="text-[#3D3D3D]"># {tag}</span>

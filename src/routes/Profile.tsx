@@ -87,7 +87,7 @@ export const Profile = () => {
                       <title id="at7s7bi6m1afezl4x41qu33032jqhhl">Post</title>
                       <path d="M19 22H5a3 3 0 01-3-3V3a1 1 0 011-1h14a1 1 0 011 1v12h4v4a3 3 0 01-3 3zm-1-5v2a1 1 0 002 0v-2h-2zm-2 3V4H4v15a1 1 0 001 1h11zM6 7h8v2H6V7zm0 4h8v2H6v-2zm0 4h5v2H6v-2z"></path>
                     </svg>
-                    {profile.postCount} posts published
+                    <span>{profile.postCount} posts published</span>
                   </div>
                   <div className="flex">
                     <svg
@@ -104,7 +104,7 @@ export const Profile = () => {
                       </title>
                       <path d="M10 3h4a8 8 0 010 16v3.5c-5-2-12-5-12-11.5a8 8 0 018-8zm2 14h2a6 6 0 000-12h-4a6 6 0 00-6 6c0 3.61 2.462 5.966 8 8.48V17z"></path>
                     </svg>
-                    {profile.commentCount} comments written
+                    <span>{profile.commentCount} comments written</span>
                   </div>
                 </div>
               </SidebarContainer>
@@ -114,7 +114,7 @@ export const Profile = () => {
             <SidebarContainer>
               <div className="md:flex block">
                 <img
-                  className="mr-2 rounded-[50%] lg:h-28 lg:w-28 md:h-14 md:w-14 h-12 w-12 lg:mt-[-40px] md:mt-[-30px] mt-[-35px] border-solid border-4 border-white"
+                  className="mr-2 rounded-[50%] lg:h-28 lg:w-28 md:h-14 md:w-14 h-12 w-12 lg:mt-[-40px] md:mt-[-30px] mt-[-35px] border-solid border-4 border-white dark:border-blue-900"
                   src={profile.photoURL}
                   alt={profile.displayName}
                 />

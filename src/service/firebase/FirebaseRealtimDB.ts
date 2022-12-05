@@ -1,5 +1,13 @@
 import type { Attempt, AttemptEntry, Attempts, Run } from "./domain";
-import { child, get, push, remove, set, update } from "firebase/database";
+import {
+  child,
+  get,
+  orderByChild,
+  push,
+  remove,
+  set,
+  update,
+} from "firebase/database";
 import {
   getAllUsersRef,
   getAttemptRef,
@@ -123,6 +131,20 @@ class FirebaseRealtimeDB {
         ? Object.keys(profile[0].followers).length.toString()
         : "0";
       return { ...profile[0], postCount, commentCount, followerCount, posts };
+    }
+  }
+
+  async getUserCount() {
+    logger.trace(`Fetch attempt for all [users]`);
+
+    logger.debug(`Attempting to fetch user count in realtime database`);
+
+    const snapshot = await get(getAllUsersRef());
+    if (snapshot.exists()) {
+      logger.info(`Successfully fetched user count`);
+      return snapshot.size.toString();
+    } else {
+      logger.info(`Failed to fetch user count`);
     }
   }
 

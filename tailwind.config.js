@@ -8,13 +8,16 @@ module.exports = {
     extend: {
       colors: {
         dark: "#242424",
-        default: "#333333",
+        default: "#000000",
         "brand-blue": "#2F3AB1",
       },
       backgroundColor: {
         "light-blue": "#EBECFC",
         "primary-blue": "#3B49DF",
-        page: "#F5F5F5",
+        "page-light": "#F5F5F5",
+        "page-dark": "#000",
+        "container-light": "#ffffff",
+        "container-dark": "#171717",
       },
       outline: {
         "brand-blue": "solid 1px #2F3AB1",

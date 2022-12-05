@@ -36,10 +36,11 @@ export const SignInButtons = ({ flex }: Props) => {
       }
     >
       <div className={flex === FlexDirections.ROW ? "mr-2" : "text-center"}>
-        <Button onClick={signIn} text={"Log in"} variant={ButtonVariant.FLAT} />
+        <Button onClick={signIn} text="Log in" variant={ButtonVariant.FLAT} />
       </div>
       <div className={flex === FlexDirections.ROW ? "mr-2" : "mb-2"}>
         <Button
+          onClick={signIn}
           text="Create account"
           variant={ButtonVariant.OUTLINED}
           route="login"

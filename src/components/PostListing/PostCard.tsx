@@ -24,7 +24,7 @@ export const PostCard = ({ post, index, highlight }: Props) => {
           </div>
         </Link>
       )}
-      <div className="p-5 rounded-md bg-white shadow-outline">
+      <div className="bg-container-light dark:bg-container-dark p-5 rounded-md shadow-outline">
         <div className="grid grid-flow-col grid-cols-[130px,1fr]">
           <Link className="flex" to={Paths.HOME + post.author.nameId}>
             <img
