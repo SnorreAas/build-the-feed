@@ -133,7 +133,7 @@ export const ActionBar = ({
             </span>
             <span
               className={`${
-                userHasBookmark && "text-blue-600"
+                userHasBookmark && "text-blue-500"
               } min-w-auto block text-default group-hover:text-blue-500`}
             >
               {bookmarksCount ?? "0"}
