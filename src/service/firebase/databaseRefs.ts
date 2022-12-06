@@ -52,6 +52,22 @@ export function getUserFollowingRef(uid: string): DatabaseReference {
   return child(root, `/users/${uid}/following`);
 }
 
+export function getUserFollowersIdRef(
+  uid: string,
+  id: string
+): DatabaseReference {
+  const root = getDatabaseRoot();
+  return child(root, `/users/${uid}/followers/${id}`);
+}
+
+export function getUserFollowingIdRef(
+  uid: string,
+  id: string
+): DatabaseReference {
+  const root = getDatabaseRoot();
+  return child(root, `/users/${uid}/following/${id}`);
+}
+
 export function getPostsRef(): DatabaseReference {
   const root = getDatabaseRoot();
   return child(root, `/posts`);

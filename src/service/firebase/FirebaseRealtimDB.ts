@@ -12,7 +12,9 @@ import {
   getPostsRef,
   getUserBookmarksIdRef,
   getUserBookmarksRef,
+  getUserFollowersIdRef,
   getUserFollowersRef,
+  getUserFollowingIdRef,
   getUserFollowingRef,
   getUserLikesIdRef,
   getUserLikesRef,
@@ -248,8 +250,8 @@ class FirebaseRealtimeDB {
     );
     const snapshot = await get(getUserFollowingRef(loggedInUser));
     if (snapshot.exists() && snapshot.hasChild(userToFollow)) {
-      await remove(getUserFollowingRef(loggedInUser));
-      await remove(getUserFollowersRef(userToFollow));
+      await remove(getUserFollowingIdRef(loggedInUser, userToFollow));
+      await remove(getUserFollowersIdRef(userToFollow, loggedInUser));
       logger.info(`Successfully removed follow`);
     } else {
       await update(getUserFollowingRef(loggedInUser), { [userToFollow]: true });
