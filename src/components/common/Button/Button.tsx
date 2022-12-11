@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { buttonStyles } from "./style";
 
 export enum ButtonVariant {
@@ -37,7 +37,7 @@ export const Button = ({
 
   if (route) {
     return (
-      <Link className="m-auto" to={route}>
+      <Link className="m-auto" href={route}>
         {button}
       </Link>
     );

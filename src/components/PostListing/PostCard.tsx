@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { ImageBox } from "../common/ImageBox";
 import { createPostUrl } from "./helpers";
 import { PostResponse, Tag } from "../types";
-import { Paths } from "../../routes/routes";
+import { Paths } from "../../old-react/routes/routes";
 
 interface Props {
   post: PostResponse;
@@ -18,7 +18,7 @@ export const PostCard = ({ post, index, highlight }: Props) => {
   return (
     <div>
       {index === 0 && highlight && (
-        <Link to={createPostUrl(post.author.nameId, post.id)}>
+        <Link href={createPostUrl(post.author.nameId, post.id)}>
           <div className="relative w-full pt-[42%] rounded-t-md">
             <ImageBox img={post.file} />
           </div>
@@ -26,7 +26,7 @@ export const PostCard = ({ post, index, highlight }: Props) => {
       )}
       <div className="bg-container-light dark:bg-container-dark p-5 rounded-md shadow-outline">
         <div className="grid grid-flow-col grid-cols-[130px,1fr]">
-          <Link className="flex" to={Paths.HOME + post.author.nameId}>
+          <Link className="flex" href={Paths.HOME + post.author.nameId}>
             <img
               className="mr-2 mt-1 rounded-[50%] h-8 w-8"
               src={post.author.photoURL}
@@ -39,12 +39,12 @@ export const PostCard = ({ post, index, highlight }: Props) => {
           </Link>
           <Link
             className="block h-full w-full"
-            to={createPostUrl(post.author.nameId, post.id)}
+            href={createPostUrl(post.author.nameId, post.id)}
           />
         </div>
         <Link
           className="block pl-10 cursor-pointer"
-          to={createPostUrl(post.author.nameId, post.id)}
+          href={createPostUrl(post.author.nameId, post.id)}
         >
           <h2 className="text-2xl font-bold pb-2">{post.title}</h2>
           <div className="pb-8">

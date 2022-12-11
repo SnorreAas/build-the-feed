@@ -1,4 +1,4 @@
-import { Paths } from "../../routes/routes";
+import { Paths } from "../../old-react/routes/routes";
 import { useUserContext } from "../auth/UserContext";
 import { Button } from "../common/Button";
 import { ButtonVariant } from "../common/Button/Button";

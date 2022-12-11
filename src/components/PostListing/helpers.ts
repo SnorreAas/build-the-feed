@@ -1,4 +1,4 @@
-import { Paths } from "../../routes/routes";
+import { Paths } from "../../old-react/routes/routes";
 
 export const createUserIdFromName = (
   userName: string | null

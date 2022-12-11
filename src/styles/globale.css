@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-page-light dark:bg-page-dark;
+}
+
+code {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+span,
+input,
+p {
+  @apply text-default dark:text-white;
+}
+
+input,
+textarea {
+  @apply text-default dark:text-white dark:bg-transparent;
+}
+
+svg {
+  @apply fill-[#000] dark:fill-[white];
+}
+
+.markdown > * {
+  @apply text-lg;
+}
+
+.markdown > h1 {
+  @apply text-3xl font-medium mb-3;
+}
+.markdown > h2 {
+  @apply text-2xl font-medium mb-3;
+}
+
+.markdown > h3 {
+  @apply text-xl font-normal mb-3;
+}
+
+.markdown > p {
+  @apply text-lg mb-8;
+}
+
+.markdown > a {
+  @apply font-bold text-blue-500;
+}
+
+.markdown > ul {
+  @apply space-y-1 mt-4 mb-8 max-w-md list-disc list-inside text-gray-800 dark:text-gray-400;
+}
+
+.markdown > ol {
+  @apply pl-5 mt-4 mb-8 space-y-1 list-decimal text-gray-800 dark:text-gray-400;
+}
+
+.markdown > blockquote {
+  @apply p-4 my-4 bg-gray-50 border-l-4 border-gray-300 dark:border-gray-500 dark:bg-gray-800;
+}
+
+.markdown > blockquote > p {
+  @apply text-xl italic font-medium leading-relaxed text-gray-900 dark:text-white;
+}
+
+.markdown > pre {
+  @apply mb-6;
+}
+
+.markdown > pre > div > code {
+  white-space: pre-wrap !important; /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+  white-space: -pre-wrap !important; /* Opera 4-6 */
+  white-space: -o-pre-wrap !important; /* Opera 7 */
+  word-wrap: break-word !important;
+}
