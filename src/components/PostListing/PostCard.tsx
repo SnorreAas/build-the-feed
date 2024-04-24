@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { ImageBox } from "../common/ImageBox";
-import { createPostUrl } from "./helpers";
-import { PostResponse, Tag } from "../types";
 import { Paths } from "../../routes/routes";
+import { ImageBox } from "../common/ImageBox";
+import { PostResponse, Tag } from "../types";
+import { createPostUrl } from "./helpers";
 
 interface Props {
   post: PostResponse;
@@ -11,7 +11,8 @@ interface Props {
 }
 
 export const PostCard = ({ post, index, highlight }: Props) => {
-  if (!post.author) {
+  console.log(post);
+  if (!post?.author) {
     return null;
   }
 

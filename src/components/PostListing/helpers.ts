@@ -13,3 +13,9 @@ export const createPostUrl = (userName: string, title: string) => {
   const userUrl = createUserIdFromName(userName);
   return `/${userUrl}/${title}/`;
 };
+
+export const hasFilterLatestInUrl = () => {
+  const params = new URLSearchParams(window.location.search);
+  const search = params.get("filter");
+  return search === "latest";
+}
