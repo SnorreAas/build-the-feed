@@ -11,7 +11,6 @@ interface Props {
 }
 
 export const PostCard = ({ post, index, highlight }: Props) => {
-  console.log(post);
   if (!post?.author) {
     return null;
   }
@@ -50,7 +49,7 @@ export const PostCard = ({ post, index, highlight }: Props) => {
           <h2 className="text-2xl font-bold pb-2">{post.title}</h2>
           <div className="pb-8">
             {post.tags?.map((tag: Tag, index: number) => (
-              <span key={index} className="mr-4 text-gray-600">
+              <span key={`${tag.name}-${index}`} className="mr-4 text-gray-600">
                 #{tag}
               </span>
             ))}
